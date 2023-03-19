@@ -8,10 +8,41 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
+const (
+	Miass     = "Миасс"
+	Sochi     = "Сочи"
+	Krasnodar = "Краснодар"
+)
+
+type State struct {
+	Temperature        float64
+	WindSpeed          float64
+	SelectedLocation   string
+	LocationToUrl      map[string]string
+	LocationToMenuItem map[string]*systray.MenuItem
+	Cron               *cron.Cron
+}
+
+type WeatherResponse struct {
+	CurrentWeather struct {
+		Temperature float64 `json:"temperature"`
+		WindSpeed   float64 `json:"windspeed"`
+	} `json:"current_weather"`
+}
+
 func main() {
-	state := &State{}
+	state := &State{
+		SelectedLocation: Sochi,
+		LocationToUrl: map[string]string{
+			Miass:     "https://api.open-meteo.com/v1/forecast?latitude=55.0832254&longitude=60.0960609&current_weather=true&hourly=temperature_2m",
+			Sochi:     "https://api.open-meteo.com/v1/forecast?latitude=43.6358199&longitude=39.7117688&current_weather=true&hourly=temperature_2m",
+			Krasnodar: "https://api.open-meteo.com/v1/forecast?latitude=45.0250369&longitude=39.0414887&current_weather=true&hourly=temperature_2m",
+		},
+		LocationToMenuItem: map[string]*systray.MenuItem{},
+	}
 
 	systray.Run(state.onReady, state.onExit)
 }
@@ -24,45 +55,34 @@ func (state *State) onReady() {
 		log.Fatalln(err)
 	}
 	state.Cron.Start()
+
+	for location, _ := range state.LocationToUrl {
+		state.LocationToMenuItem[location] = systray.AddMenuItem(location, "")
+	}
+
+	for {
+		select {
+		case <-state.LocationToMenuItem[Miass].ClickedCh:
+			state.SelectedLocation = Miass
+			state.updateWeather()
+		case <-state.LocationToMenuItem[Sochi].ClickedCh:
+			state.SelectedLocation = Sochi
+			state.updateWeather()
+		case <-state.LocationToMenuItem[Krasnodar].ClickedCh:
+			state.SelectedLocation = Krasnodar
+			state.updateWeather()
+		}
+	}
 }
 
 func (state *State) onExit() {
 
 }
 
-type State struct {
-	Temperature float64 `json:"temperature"`
-	Windspeed   float64 `json:"windspeed"`
-	Cron        *cron.Cron
-}
-
-type WeatherResponse struct {
-	Latitude             float64 `json:"latitude"`
-	Longitude            float64 `json:"longitude"`
-	GenerationtimeMs     float64 `json:"generationtime_ms"`
-	UtcOffsetSeconds     int     `json:"utc_offset_seconds"`
-	Timezone             string  `json:"timezone"`
-	TimezoneAbbreviation string  `json:"timezone_abbreviation"`
-	Elevation            float64 `json:"elevation"`
-	CurrentWeather       struct {
-		Temperature   float64 `json:"temperature"`
-		Windspeed     float64 `json:"windspeed"`
-		Winddirection float64 `json:"winddirection"`
-		Weathercode   int     `json:"weathercode"`
-		Time          string  `json:"time"`
-	} `json:"current_weather"`
-	HourlyUnits struct {
-		Time          string `json:"time"`
-		Temperature2M string `json:"temperature_2m"`
-	} `json:"hourly_units"`
-	Hourly struct {
-		Time          []string  `json:"time"`
-		Temperature2M []float64 `json:"temperature_2m"`
-	} `json:"hourly"`
-}
-
 func (state *State) updateWeather() {
-	res, err := http.Get("https://api.open-meteo.com/v1/forecast?latitude=43.6358199&longitude=39.7117688&current_weather=true&hourly=temperature_2m")
+	client := &http.Client{Timeout: 10 * time.Second}
+	url := state.LocationToUrl[state.SelectedLocation]
+	res, err := client.Get(url)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -84,9 +104,10 @@ func (state *State) updateWeather() {
 
 	systray.SetTitle(
 		fmt.Sprintf(
-			"Weather: %v°C, Wind: %vM/s",
+			"%s: %v°C, %vM/s",
+			state.SelectedLocation,
 			weatherResponse.CurrentWeather.Temperature,
-			weatherResponse.CurrentWeather.Windspeed,
+			weatherResponse.CurrentWeather.WindSpeed,
 		),
 	)
 }

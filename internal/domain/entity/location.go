@@ -1,7 +1,7 @@
 package entity
 
 type Location struct {
-	name      string
-	latitude  float64
-	longitude float64
+	Name      string  `schema:"name"`
+	Latitude  float64 `schema:"latitude"`
+	Longitude float64 `schema:"longitude"`
 }

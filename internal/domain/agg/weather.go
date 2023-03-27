@@ -6,7 +6,9 @@ import (
 )
 
 type Weather struct {
+	// Entities
+	entity.Location
 	entity.Weather
-
+	// ValueObjects
 	vo.Timestamp
 }

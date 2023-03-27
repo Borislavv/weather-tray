@@ -1,6 +1,7 @@
 package entity
 
 type Weather struct {
-	Temperature float64
-	WindSpeed   float64
+	LocationId  string  `schema:"locationId"`
+	Temperature float64 `schema:"temperature"`
+	WindSpeed   float64 `schema:"windSpeed"`
 }

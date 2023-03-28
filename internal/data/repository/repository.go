@@ -7,6 +7,7 @@ import "github.com/Borislavv/weather-tray/internal/domain/agg"
  */
 
 type Weather interface {
+	// change to use locationQuery ass parameter
 	Get(location agg.Location) agg.Weather
 	Create(weather agg.Weather) (string, error)
 }

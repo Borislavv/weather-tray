@@ -1,4 +1,4 @@
-package dto
+package getterDto
 
 type WeatherResponse struct {
 	CurrentWeather struct {

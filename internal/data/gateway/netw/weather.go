@@ -1,39 +1,39 @@
-package netw
+package gateway
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/Borislavv/weather-tray/internal/domain/agg"
-	"github.com/Borislavv/weather-tray/internal/domain/dto"
+	"github.com/Borislavv/weather-tray/internal/domain/dto/getter"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
 
-type Weather struct {
-	endpoint string
+type WeatherGateway struct {
+	endpoint string // pattern (latitude=%s&longitude=%s)
 	timeout  time.Duration
 }
 
 func NewWeather(
 	endpoint string,
 	timeout time.Duration,
-) *Weather {
-	return &Weather{
+) *WeatherGateway {
+	return &WeatherGateway{
 		endpoint: endpoint,
 		timeout:  timeout,
 	}
 }
 
-func (w *Weather) Get(location agg.Location) (*dto.WeatherResponse, error) {
+// Get is a method which return a temperature and windSpeed by given Location.
+func (w *WeatherGateway) Get(location agg.Location) (*getter.WeatherResponse, error) {
 	client := &http.Client{Timeout: w.timeout}
 	url := fmt.Sprintf(w.endpoint, location.Latitude, location.Longitude)
 
 	res, err := client.Get(url)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 	defer res.Body.Close()
 
@@ -46,7 +46,7 @@ func (w *Weather) Get(location agg.Location) (*dto.WeatherResponse, error) {
 		return nil, err
 	}
 
-	response := &dto.WeatherResponse{}
+	response := &getter.WeatherResponse{}
 	if err = json.Unmarshal(body, response); err != nil {
 		return nil, err
 	}

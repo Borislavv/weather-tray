@@ -2,7 +2,7 @@ package gateway
 
 import (
 	"github.com/Borislavv/weather-tray/internal/domain/agg"
-	dto "github.com/Borislavv/weather-tray/internal/domain/dto/getter/response"
+	"github.com/Borislavv/weather-tray/internal/domain/dto/getter"
 )
 
 /**
@@ -10,5 +10,5 @@ import (
  */
 
 type Weather interface {
-	Get(location agg.Location) (dto.WeatherResponse, error)
+	Get(location agg.Location) (*getter.WeatherResponse, error)
 }

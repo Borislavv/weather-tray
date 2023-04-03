@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/Borislavv/weather-tray/internal/domain/agg"
+import (
+	"github.com/Borislavv/weather-tray/internal/domain/agg"
+	"github.com/Borislavv/weather-tray/internal/domain/agg/query"
+)
 
 /**
  * Repository must accept an aggregate and return it if it's possible.
@@ -13,5 +16,5 @@ type Weather interface {
 }
 
 type Location interface {
-	Get() agg.Location
+	Find(query query.LocationQuery) (agg.Location, error)
 }

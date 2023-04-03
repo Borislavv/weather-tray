@@ -11,8 +11,8 @@ func NewWeather() *WeatherMockGateway {
 	return &WeatherMockGateway{}
 }
 
-func (w *WeatherMockGateway) Get(location agg.Location) (*getter.WeatherResponse, error) {
-	return &getter.WeatherResponse{
+func (w *WeatherMockGateway) Get(location agg.Location) (*getterDto.WeatherResponse, error) {
+	return &getterDto.WeatherResponse{
 		CurrentWeather: struct {
 			Temperature float64 `json:"temperature"`
 			WindSpeed   float64 `json:"windspeed"`

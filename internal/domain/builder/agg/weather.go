@@ -1,4 +1,4 @@
-package builder
+package aggBuilder
 
 import (
 	"github.com/Borislavv/weather-tray/internal/domain/agg"
@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-type WeatherBuilder struct {
+type WeatherAgg struct {
 }
 
-func NewWeatherBuilder() *WeatherBuilder {
-	return &WeatherBuilder{}
+func NewWeatherBuilder() *WeatherAgg {
+	return &WeatherAgg{}
 }
 
-func (b *WeatherBuilder) BuildFromResponseDto(
+func (b *WeatherAgg) BuildFromResponseDto(
 	response getterResponseDto.WeatherResponse,
 	location agg.Location,
 ) agg.Weather {

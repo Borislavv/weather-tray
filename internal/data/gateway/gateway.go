@@ -10,5 +10,5 @@ import (
  */
 
 type Weather interface {
-	Get(location agg.Location) (*getter.WeatherResponse, error)
+	Get(location agg.Location) (getterDto.WeatherResponse, error)
 }

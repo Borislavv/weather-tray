@@ -1,21 +1,21 @@
-package builder
+package aggBuilder
 
 import (
 	"github.com/Borislavv/weather-tray/internal/data/repository"
 	"github.com/Borislavv/weather-tray/internal/domain/agg"
-	apiRequestDto "github.com/Borislavv/weather-tray/internal/domain/dto/api"
+	apiDto "github.com/Borislavv/weather-tray/internal/domain/dto/api"
 	"github.com/Borislavv/weather-tray/internal/domain/entity"
 )
 
-type LocationBuilder struct {
+type LocationAgg struct {
 	locationRepository *repository.Location
 }
 
-func NewLocationBuilder() *LocationBuilder {
-	return &LocationBuilder{}
+func NewLocationBuilder() *LocationAgg {
+	return &LocationAgg{}
 }
 
-func (b *LocationBuilder) BuildFromRaw(title string, latitude float64, longitude float64) agg.Location {
+func (b *LocationAgg) BuildFromRaw(title string, latitude float64, longitude float64) agg.Location {
 	return agg.Location{
 		Location: entity.Location{
 			Title:     title,
@@ -25,7 +25,7 @@ func (b *LocationBuilder) BuildFromRaw(title string, latitude float64, longitude
 	}
 }
 
-func (b *LocationBuilder) BuildFromDto(request apiRequestDto.LocationRequest) agg.Location {
+func (b *LocationAgg) BuildFromDto(request apiDto.LocationRequest) agg.Location {
 	return agg.Location{
 		Location: entity.Location{
 			Title:     request.Title,

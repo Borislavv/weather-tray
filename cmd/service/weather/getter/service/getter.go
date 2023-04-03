@@ -32,7 +32,7 @@ func (g *Getter) Run() error {
 	locationQueryBuilder := queryBuilder.NewLocationQueryBuilder()
 
 	locationUsecase := getterUsecase.NewLocationUsecase(
-		file.NewLocationRepository("locations.csv"),
+		fileRepository.NewLocationRepository("locations.csv"),
 		locationQueryBuilder,
 	)
 
